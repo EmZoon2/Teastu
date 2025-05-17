@@ -18,4 +18,12 @@ public class Campus
         }
         return null;
     }
+    public void addUser(User user)
+    {
+        users.add(user);
+    }
+    public void createCourse(String name, Department department)
+    {
+        courses.add(new Course(name, department));
+    }
 }
