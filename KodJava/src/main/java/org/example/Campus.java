@@ -22,8 +22,10 @@ public class Campus
     {
         users.add(user);
     }
-    public void createCourse(String name, Department department)
-    {
+
+
+    public boolean createCourse(String name, Department department, Teacher creator) {
+        if (creator.courseExists(name)) return false;
         courses.add(new Course(name, department));
     }
 }

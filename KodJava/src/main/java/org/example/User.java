@@ -1,5 +1,6 @@
 package org.example;
 
+
 import java.util.ArrayList;
 
 public class User
@@ -24,5 +25,9 @@ public class User
     {
         //todo: avoid duplicates
         courses.add(course);
+    }
+
+    public Department getDepartment() {
+        return null;
     }
 }

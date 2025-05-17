@@ -41,7 +41,7 @@ public class Main
 
     // prywatne metody do trywialnej logiki (takie które można zastąpić inline-owym blokiem kodu) nie muszą być w UML
     private static User handleLogin(Campus campus, Scanner in) {
-        System.out.print("Type login (empty to exit): ");
+        System.out.print("Type -login (empty to exit): ");
         String typedLogin = in.nextLine();
         if (typedLogin.isEmpty()) {
             return null;
@@ -57,7 +57,7 @@ public class Main
         return user;
     }
 
-    private static void studentSession(Campus campus, User user, Scanner in) {
+    private static void studentSession(Campus campus, User activeUser, Scanner in) {
         boolean sessionActive = true;
         while (sessionActive) {
             System.out.println("\n=== Student Menu ===");
@@ -76,7 +76,7 @@ public class Main
         }
     }
 
-    private static void teacherSession(Campus campus, User user, Scanner in) {
+    private static void teacherSession(Campus campus, User activeUser, Scanner in) {
         boolean sessionActive = true;
         while (sessionActive) {
             System.out.println("\n=== Teacher Menu ===");
@@ -88,15 +88,23 @@ public class Main
             String choice = in.nextLine();
 
             switch (choice) {
-                case "1" -> System.out.println("Viewing courses..."); // Implement this
-                case "2" -> System.out.println("Creating new course..."); // Implement this
+                case "1" -> {}
+                case "2" -> {
+                    boolean courseCreated = false;
+                    while (!courseCreated) {
+                        System.out.print("Enter course name: ");
+                        courseCreated = campus.createCourse(in.nextLine(), activeUser.getDepartment(), activeUser);
+                        ; //todo change to getter
+                        if (!courseCreated) System.out.println("You already created a course with that name!");
+                    }
+                }
                 case "" -> sessionActive = false;
                 default -> System.out.println("Invalid option!");
             }
         }
     }
 
-    private static void adminSession(Campus campus, User user, Scanner in) {
+    private static void adminSession(Campus campus, User activeUser, Scanner in) {
         boolean sessionActive = true;
         while (sessionActive) {
             System.out.println("\n=== Admin Menu ===");
