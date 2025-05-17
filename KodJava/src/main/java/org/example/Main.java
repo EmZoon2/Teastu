@@ -13,29 +13,110 @@ public class Main
         campus.addUser(new Student("nieuk1", "Hasl0", UserType.student));
 
         //SESSION INIT
-        Scanner in = new Scanner(System.in);
+        Scanner in = new Scanner(System.in); //console reader
         User activeUser = null;
-        boolean keepRunning = true;
+        boolean keepRunning = true; //co to kurwa jest
 
-        //LOOP
+        System.out.println("Welcome to Teastu! Please log in to begin your learning journey :D :D ");
+
         while(keepRunning)
         {
-            switch(activeUser.userType)
-            {
-                    case admin ->
-                    {
-                        //admins operations menu
-                    }
-                    case student ->
-                    {
-                        //students operations menu
-                    }
-                    case teacher ->
-                    {
-                        //teacher operations menu
-                    }
-                    case null, default -> {activeUser = campus.userLogin(in.nextLine(), in.nextLine());}
+            activeUser = handleLogin(campus, in);
+            if (activeUser == null) {
+                break;
+            }
+            switch (activeUser.userType) {
+                case admin -> adminSession(campus, activeUser, in);
+                case student -> studentSession(campus, activeUser, in);
+                case teacher -> teacherSession(campus, activeUser, in);
+                default -> System.out.println("Unknown user type!");
+            }
+
+        }
+
+        in.close();
+        System.out.println("Thank you for using Teastu! Goodbye!");
+    }
+
+
+    // prywatne metody do trywialnej logiki (takie które można zastąpić inline-owym blokiem kodu) nie muszą być w UML
+    private static User handleLogin(Campus campus, Scanner in) {
+        System.out.print("Type login (empty to exit): ");
+        String typedLogin = in.nextLine();
+        if (typedLogin.isEmpty()) {
+            return null;
+        }
+
+        System.out.print("Type password: ");
+        String typedPassword = in.nextLine();
+
+        User user = campus.userLogin(typedLogin, typedPassword);
+        if (user == null) {
+            System.out.println("Invalid login or password!");
+        }
+        return user;
+    }
+
+    private static void studentSession(Campus campus, User user, Scanner in) {
+        boolean sessionActive = true;
+        while (sessionActive) {
+            System.out.println("\n=== Student Menu ===");
+            System.out.println("1:  View already joined courses");
+            System.out.println("2:  View courses available for joining");
+            System.out.println("Empty: Logout"); //todo confirm with Y to logout
+
+            String choice = in.nextLine();
+
+            switch (choice) {
+                case "1" -> System.out.println("Viewing joined courses...");
+                case "2" -> System.out.println("Viewing available courses...");
+                case "" -> sessionActive = false;
+                default -> System.out.println("Invalid option!");
             }
         }
     }
+
+    private static void teacherSession(Campus campus, User user, Scanner in) {
+        boolean sessionActive = true;
+        while (sessionActive) {
+            System.out.println("\n=== Teacher Menu ===");
+            System.out.println("1: View my courses");
+            System.out.println("2: Create new course");
+            System.out.println("Empty: Logout"); //todo confirm Y to logout
+
+
+            String choice = in.nextLine();
+
+            switch (choice) {
+                case "1" -> System.out.println("Viewing courses..."); // Implement this
+                case "2" -> System.out.println("Creating new course..."); // Implement this
+                case "" -> sessionActive = false;
+                default -> System.out.println("Invalid option!");
+            }
+        }
+    }
+
+    private static void adminSession(Campus campus, User user, Scanner in) {
+        boolean sessionActive = true;
+        while (sessionActive) {
+            System.out.println("\n=== Admin Menu ===");
+            System.out.println("1: Manage users");
+            System.out.println("2: Manage courses");
+            //System.out.println("3. View system logs");
+            System.out.println("Empty: Logout");
+
+
+            String choice = in.nextLine();
+
+            switch (choice) {
+                case "1" -> System.out.println("Managing users..."); // Implement this
+                case "2" -> System.out.println("Managing courses..."); // Implement this
+                //case "3" -> System.out.println("Viewing logs..."); // Implement this
+                case "" -> sessionActive = false;
+                default -> System.out.println("Invalid option!");
+            }
+        }
+    }
+
 }
+
