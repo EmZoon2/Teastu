@@ -3,17 +3,15 @@ package org.example;
 
 import java.util.ArrayList;
 
-public class User
+public abstract class User
 {
-    protected String login;
+    protected final String login;
     protected String password;
-    protected UserType userType;
-    protected ArrayList<Course> courses = new ArrayList<Course>();
+    protected final ArrayList<Course> courses = new ArrayList<>();
 
-    public User(String login, String password, UserType userType) {
+    public User(String login, String password) {
         this.login = login;
         this.password = password;
-        this.userType = userType;
     }
 
     public boolean tryLogin(String login, String password)
@@ -23,11 +21,22 @@ public class User
 
     public void joinCourse(Course course)
     {
-        //todo: avoid duplicates
         courses.add(course);
     }
 
-    public Department getDepartment() {
-        return null;
+    public ArrayList<Course> getCourses() {return courses;}
+
+    public String getName() {return login;}
+
+    public abstract UserType getUserType();
+
+    public boolean courseExists(String name)
+    {
+        for(Course c : courses)
+        {
+            if(c.getName().equals(name))
+                return true;
+        }
+        return false;
     }
 }

@@ -4,24 +4,25 @@ import java.util.ArrayList;
 
 public class Teacher extends User
 {
-    private Department department;
-    private ArrayList<Course> createdCourses = new ArrayList<Course>();
-    public Teacher(String login, String password, UserType userType, Department department)
+    private final Department department;
+    public Teacher(String login, String password, Department department)
     {
-        super(login, password, userType);
+        super(login, password);
         this.department = department;
     }
 
-    public boolean courseExists(String name)
-    {
-        for(Course c : createdCourses)
-        {
-            if(c.getName().equals(name))
-            {
-                return true;
-            }
-        }
-        return false;
+    public Department getDepartment() {
+        return department;
+    }
+
+    @Override
+    public void joinCourse(Course course) {
+        courses.add(course);
+    }
+
+    @Override
+    public UserType getUserType() {
+        return UserType.teacher;
     }
 
 

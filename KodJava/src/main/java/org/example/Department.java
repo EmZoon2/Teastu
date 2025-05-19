@@ -2,6 +2,7 @@ package org.example;
 
 public enum Department
 {
+    none, // kurs bez wydzialu, dostepny dla wszystkich
     business,
     health,
     history,
