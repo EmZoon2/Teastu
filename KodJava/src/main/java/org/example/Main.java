@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -94,6 +95,7 @@ public class Main
             System.out.println("\n=== Teacher Menu ===");
             System.out.println("1: View my courses");
             System.out.println("2: Create new course");
+
             System.out.println("Empty: Logout");
 
             String choice = in.nextLine();
@@ -117,6 +119,7 @@ public class Main
                     else department = teacher.getDepartment();
                     Campus.getInstance().createCourse(teacher, name, department);
                 }
+
                 case "" -> {
                     System.out.println("Are you sure you want to quit? y/N");
                     if (in.nextLine().equalsIgnoreCase("y"))
@@ -235,6 +238,132 @@ public class Main
         }
     }
 
-    private static void courseMenu(User activeUser, Course course, Scanner in) {} //wywołując tą metodę jesteśmy "wewnątrz kursu"
+    private static void courseMenu(User activeUser, Course course, Scanner in) {
+        boolean insideCourse = true;
+        while (insideCourse) {
+            System.out.println("\n=== Course Menu: " + course.getName() + " ===");
+
+            switch (activeUser.getUserType()) {
+                case teacher -> {
+                    System.out.println("1: View homework");
+                    System.out.println("2: Add homework");
+                    System.out.println("3: Grade homeworks");
+
+
+                    System.out.println("Empty: Go back");
+                    String choice = in.nextLine();
+                    switch (choice) {
+                        case "1" -> {
+                            System.out.println("Homework assignments:");
+                            for (int i = 0; i < course.getHomeworks().size(); i++) {
+                                System.out.println((i + 1) + ". " + course.getHomeworks().get(i));
+                            }
+                        }
+                        case "2" -> {
+                            System.out.print("Enter homework description: ");
+                            String hw = in.nextLine();
+                            course.addHomework(hw);
+                            System.out.println("Homework added successfully.");
+                        }
+                        case "3" -> {
+                            ArrayList<String> hws = course.getHomeworks();
+                            if (hws.isEmpty()) {
+                                System.out.println("No homeworks to grade.");
+                                break;
+                            }
+                            System.out.println("Chose the homework you want to grade:");
+                            for (int i = 0; i < hws.size(); i++) {
+                                System.out.println((i + 1) + ". " + hws.get(i));
+                            }
+                            String inputHw = in.nextLine();
+                            try {
+                                int hwIndex = Integer.parseInt(inputHw) - 1;
+                                if (hwIndex < 0 || hwIndex >= hws.size()) {
+                                    System.out.println("Invalid homework number.");
+                                    break;
+                                }
+                                String selectedHw = hws.get(hwIndex);
+                                Map<Student, String> submissions = course.homeworkSubmissions.get(selectedHw);
+                                if (submissions == null || submissions.isEmpty()) {
+                                    System.out.println("No assingments for this task.");
+                                    break;
+                                }
+                                System.out.println("List of submitted homeworks:");
+                                ArrayList<Student> students = new ArrayList<>(submissions.keySet());
+                                for (int i = 0; i < students.size(); i++) {
+                                    Student s = students.get(i);
+                                    String submission = submissions.get(s);
+                                    String grade = course.getGrade(selectedHw, s);
+                                    System.out.printf("%d. %s - Answer: %s - Grade: %s\n",
+                                            i + 1, s.getName(), submission, grade != null ? grade : "No grade.");
+                                }
+                                System.out.println("Pick the student number to grade the homework:");
+                                String inputStudent = in.nextLine();
+                                int studentIndex = Integer.parseInt(inputStudent) - 1;
+                                if (studentIndex < 0 || studentIndex >= students.size()) {
+                                    System.out.println("Invalid student number.");
+                                    break;
+                                }
+                                Student selectedStudent = students.get(studentIndex);
+                                System.out.println("Grade:");
+                                String grade = in.nextLine();
+                                course.gradeHomework(selectedHw, selectedStudent, grade);
+                                System.out.println("Grade saved!");
+                            } catch (NumberFormatException e) {
+                                System.out.println("Wrong number format");
+                            }
+                        }
+
+                        case "" -> insideCourse = false;
+                        default -> System.out.println("Invalid option.");
+                    }
+                }
+                case student -> {
+                    Student student = (Student) activeUser;
+                    boolean inHomeworkMenu = true;
+                    while (inHomeworkMenu) {
+                        System.out.println("\n=== Homework List for Course: " + course.getName() + " ===");
+                        ArrayList<String> hws = course.getHomeworks();
+                        for (int i = 0; i < hws.size(); i++) {
+                            String hw = hws.get(i);
+                            String submission = course.getSubmissions(hw, student);
+                            System.out.printf("%d. %s [%s]\n", i + 1, hw,
+                                    submission != null ? "Submitted" : "Not submitted");
+                        }
+                        System.out.println("Type homework number to submit or ENTER to go back:");
+                        String input = in.nextLine();
+                        if (input.isEmpty()) {
+
+                            inHomeworkMenu = false;
+                            insideCourse = false;
+                            break;
+                        }
+
+                        try {
+                            int index = Integer.parseInt(input) - 1;
+                            if (index >= 0 && index < hws.size()) {
+                                String selectedHw = hws.get(index);
+                                System.out.println("Enter your answer:");
+                                String answer = in.nextLine();
+                                course.submitHomework(selectedHw, student, answer);
+                                System.out.println("Submission received!");
+                            } else {
+                                System.out.println("Invalid number.");
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid input.");
+                        }
+                    }
+                }
+
+
+                default -> {
+                    System.out.println("User type not allowed here.");
+                    insideCourse = false;
+                }
+            }
+        }
+    }
+
 
 }
