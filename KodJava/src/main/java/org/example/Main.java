@@ -64,7 +64,6 @@ public class Main
     }
 
     private static void studentSession(User activeUser, Scanner in) {
-        Student student = (Student) activeUser;
         boolean sessionActive = true;
         while (sessionActive) {
             System.out.println("\n=== Student Menu ===");
@@ -131,24 +130,79 @@ public class Main
     }
 
     private static void adminSession(User activeUser, Scanner in) {
-        Admin admin = (Admin) activeUser;
         boolean sessionActive = true;
         while (sessionActive) {
             System.out.println("\n=== Admin Menu ===");
-            System.out.println("1: Manage users");
-            System.out.println("2: Manage courses");
+            System.out.println("1: Add users");
+            System.out.println("2: Modify Users");
             System.out.println("Empty: Logout");
-
 
             String choice = in.nextLine();
 
             switch (choice) {
-                case "1" -> System.out.println("Managing users..."); // Implement this
-                //case "2" -> System.out.println("Managing courses..."); // Implement this
+                case "1" -> addUsersMenu(activeUser, in);
+                case "2" -> addStudentDepartmentMenu(activeUser, in);
                 case "" -> sessionActive = false;
                 default -> System.out.println("Invalid option!");
             }
         }
+    }
+
+    private static void addStudentDepartmentMenu(User activeUser, Scanner in) {
+        System.out.println("=== Adding new Student Department ===");
+        //adds a student to a department, so that the student can attend that department's courses
+        String modifiedStudentLogin;
+        while(true) {
+            System.out.print("\nEnter modified student's login.");
+            modifiedStudentLogin = in.nextLine();
+            if (modifiedStudentLogin.isEmpty()) return;
+            if (Campus.getInstance().userExists(modifiedStudentLogin)) {
+                break;
+            }
+            else System.out.println("User with this login does not exist.");
+        }
+        Department selectedDepartment;
+        System.out.println("\nSelect department by number:");
+        selectedDepartment = chooseDepartment(in, false);
+        if (selectedDepartment == null) return;
+        if ( Campus.getInstance().addStudentDepartment(modifiedStudentLogin, selectedDepartment) )
+            System.out.println("Student added to department successfully.");
+        else System.out.println("Student could not be added to department. Most likely they already belong to it.");
+    }
+
+    private static Department chooseDepartment(Scanner in, boolean noneAllowed) {
+        Department selectedDepartment;
+        while (true) {
+            System.out.println("\nSelect department by number:");
+            Department[] departments = Department.values();
+            int validIndex = 1;
+            if (noneAllowed) {
+                System.out.println("0: none");
+            }
+            for (Department dept : departments) {
+                if (dept != Department.none) {
+                    System.out.println(validIndex + ": " + dept);
+                    validIndex++;
+                }
+            }
+            String input = in.nextLine();
+            if (input.isEmpty()) return null;
+            try {
+                int deptIndex = Integer.parseInt(input);
+                if (noneAllowed && deptIndex == 0) {
+                    selectedDepartment = Department.none;
+                    break;
+                }
+                if (deptIndex > 0 && deptIndex <= validIndex - 1) {
+                    selectedDepartment = departments[deptIndex];
+                    break;
+                }
+                System.out.println("Invalid department number.");
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
+        return selectedDepartment;
     }
 
     private static void displayCourses(boolean includeCreator, ArrayList<Course> courses) {
@@ -365,5 +419,79 @@ public class Main
         }
     }
 
+    private static void addUsersMenu(User activeUser, Scanner in) {
+        System.out.println("=== Adding new User ===");
+        String newUserLogin;
+        while(true) {
+            System.out.print("\nEnter new user's login.\nPunctuation symbols disallowed, press ENTER to go back: ");
+            newUserLogin = in.nextLine();
+            if (newUserLogin.isEmpty()) return;
+            if (!inputIsValid(newUserLogin, false, false)) {
+                System.out.println("Forbidden characters. Type new input.");
+                continue;
+            }
+            if (Campus.getInstance().userExists(newUserLogin)) {
+                System.out.println("User with this login already exists.");
+                continue;
+            }
+            break;
+        }
+        String newPassword;
+        while(true) {
+            System.out.print("\nEnter new user's password.\nSpaces disallowed, symbols allowed are ! # $ % & * + - , . ? @ | ,\npress ENTER to go back: ");
+            newPassword = in.nextLine();
+            if (newPassword.isEmpty()) return;
+            if (!inputIsValid(newUserLogin, false, true)) {
+                System.out.println("Forbidden characters. Type new input.");
+                continue;
+            }
+            break;
+        }
+        UserType newUserType;
+        while(true) {
+            System.out.print("\nChoose new user's type - A for admin, S for student, T for teacher");
+            String input;
+            input = in.nextLine();
+            if (input.isEmpty()) return;
+            switch (input) {
+                case "A" -> newUserType = UserType.admin;
+                case "S" -> newUserType = UserType.student;
+                case "T" -> newUserType = UserType.teacher;
+                default -> {
+                    System.out.println("Invalid input.");
+                    continue;
+                }
+            }
+            break;
+        }
+        if (newUserType.equals(UserType.admin)) {
+            Campus.getInstance().createAdmin(newUserLogin, newPassword);
+        }
+        else {
+            Department selectedDepartment;
+            System.out.println("\nChoose new user's department - none for no department");
+            selectedDepartment = chooseDepartment(in, false);
+            if (selectedDepartment == null) return;
+            if (newUserType.equals(UserType.student))
+                Campus.getInstance().createStudent(newUserLogin, newPassword, selectedDepartment);
+            else
+                Campus.getInstance().createTeacher(newUserLogin, newPassword, selectedDepartment);
+        }
+    }
+
+    private static boolean inputIsValid(String input, boolean allowSpaces, boolean allowPunct) {
+        for (char c : input.toCharArray()) {
+            if (Character.isLetterOrDigit(c))
+                continue;
+            if (allowSpaces && (c == ' ' || c == '\t' || c == '\n'))
+                continue;
+            if (allowPunct && (c == '!' || c == '#' || c == '$' || c == '%' || c == '&' ||  // "!#$%&*+-,.?@|"
+                    c == '*' || c == '+' || c == '-' || c == ',' || c == '.' || c == '?' || c == '@' ||
+                    c == '|'))
+                continue;
+            return false;
+        }
+        return true;
+    }
 
 }

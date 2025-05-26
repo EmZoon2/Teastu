@@ -58,4 +58,24 @@ public class Campus {
         }
         return departmentCourses;
     }
+
+    public boolean userExists(String name) {
+        for(User u : users)
+            if(u.getName().equals(name))
+                return true;
+        return false;
+    }
+
+    boolean addStudentDepartment(String login, Department department) {
+        Student student = (Student) fetchUser(login);
+        return student.addDepartment(department));
+    }
+
+    private User fetchUser( String login )
+    {
+        for( User u : users )
+            if( u.getName().equals( login ) )
+                return u;
+        return null;
+    }
 }

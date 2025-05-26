@@ -30,13 +30,10 @@ public abstract class User
 
     public abstract UserType getUserType();
 
-    public boolean courseExists(String name)
-    {
+    public boolean courseExists(String name) {
         for(Course c : courses)
-        {
             if(c.getName().equals(name))
                 return true;
-        }
         return false;
     }
 }

@@ -10,6 +10,7 @@ public class Student extends User
     {
         super(login, password);
     }
+
     public boolean addDepartment(Department department) {
         return departments.add(department); //zwraca true jeśli udało się dodać do hasha
     }
@@ -18,6 +19,7 @@ public class Student extends User
     public UserType getUserType() {
         return UserType.student;
     }
+
 
     public HashSet<Department> getDepartments() {return departments;}
 
