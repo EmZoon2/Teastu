@@ -6,14 +6,13 @@ import java.util.Map;
 
 public class Course
 {
-    private final Teacher creator;
-    private final String name;
-    private final Department department;
-    private final ArrayList<Attachment> attachments = new ArrayList<>();
-    private final ArrayList<String> homeworks = new ArrayList<>();
-    public final Map<String, Map<Student, String>> homeworkSubmissions = new HashMap<>();
-    private final Map<String, Map<Student, String>> homeworkGrades = new HashMap<>();
-
+    private Teacher creator;
+    private String name;
+    private Department department;
+    private ArrayList<String> homeworks = new ArrayList<>();
+    private Map<String, Map<Student, String>> homeworkSubmissions = new HashMap<>();
+    private Map<String, Map<Student, String>> homeworkGrades = new HashMap<>();
+    private ArrayList<Map<String, String>> attachments = new ArrayList<>();
 
     public Course(String name, Department department, Teacher creator)
     {
@@ -21,21 +20,30 @@ public class Course
         this.department = department;
         this.creator = creator;
     }
+
     public String getName() {return name;}
+
     public Department getDepartment() {return department;}
+
     public Teacher getCreator() {return creator;}
-    public void addHomework(String homework){
+
+    public boolean addHomework(String homework){
+        if (homeworks.contains(homework)) return false;
         homeworks.add(homework);
         homeworkSubmissions.put(homework, new HashMap<>());
+        return true;
     }
     public ArrayList<String> getHomeworks(){
         return homeworks;
     }
-    public void submitHomework(String homework, Student student, String answer){
-        if (homeworkSubmissions.containsKey(homework)){
+
+    public void submitHomework(String homework, Student student, String answer) {
+        if (homeworkSubmissions.containsKey(homework)) {  //can overwrite already graded homework, that's ok
+            Map<Student, String> grades = homeworkGrades.get(homework);
             homeworkSubmissions.get(homework).put(student, answer);
         }
     }
+
     public  String getSubmissions(String homework, Student student){
         return homeworkSubmissions.getOrDefault(homework, new HashMap<>()).get(student);
     }
@@ -45,6 +53,18 @@ public class Course
     public String getGrade(String homework, Student student) {
         return homeworkGrades.getOrDefault(homework, new HashMap<>()).get(student);
     }
+    public ArrayList<Map<String, String>> getAttachments() {
+        return attachments;
+    }
+    public void addAttachment(String name, String content) {
+        //adding attachment with existing name simply overwrites the attachment
+        Map<String, String> attachment = new HashMap<>();
+        attachment.put("name", name);
+        attachment.put("content", content);
+        attachments.add(attachment);
+    }
 
-
+    public Map<String, Map<Student, String>> getHomeworkSubmissions() {
+        return homeworkSubmissions;
+    }
 }

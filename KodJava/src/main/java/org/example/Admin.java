@@ -2,14 +2,9 @@ package org.example;
 
 
 public class Admin extends User {
-    public Admin(String login, String password)
+    public Admin(String login, String password, UserType userType)
     {
-        super(login, password);
-    }
-
-    @Override
-    public UserType getUserType() {
-        return UserType.admin;
+        super(login, password, userType);
     }
 
 }

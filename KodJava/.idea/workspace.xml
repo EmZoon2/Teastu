@@ -77,6 +77,15 @@
       <workItem from="1747667675095" duration="463000" />
       <workItem from="1748149611543" duration="7162000" />
       <workItem from="1748275460107" duration="1655000" />
+      <workItem from="1748277177668" duration="757000" />
+      <workItem from="1748278313991" duration="39000" />
+      <workItem from="1748278476546" duration="4847000" />
+      <workItem from="1748283540801" duration="1873000" />
+      <workItem from="1748285428738" duration="2557000" />
+      <workItem from="1748289835113" duration="4267000" />
+      <workItem from="1748305915421" duration="1601000" />
+      <workItem from="1748307788039" duration="5688000" />
+      <workItem from="1748319489632" duration="130000" />
     </task>
     <servers />
   </component>
@@ -88,8 +97,18 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/example/Main.java</url>
-          <line>133</line>
+          <line>131</line>
           <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/Main.java</url>
+          <line>171</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/example/Main.java</url>
+          <line>179</line>
+          <option name="timeStamp" value="11" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -13,8 +13,4 @@ public enum Department
     arts,
     education,
     journalism;
-    @Override
-    public String toString() {
-        return super.toString();
-    }
 }

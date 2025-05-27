@@ -1,13 +1,12 @@
 package org.example;
 
-import java.util.ArrayList;
 
 public class Teacher extends User
 {
-    private final Department department;
-    public Teacher(String login, String password, Department department)
+    private Department department;
+    public Teacher(String login, String password, UserType userType, Department department)
     {
-        super(login, password);
+        super(login, password, userType);
         this.department = department;
     }
 
@@ -18,11 +17,6 @@ public class Teacher extends User
     @Override
     public void joinCourse(Course course) {
         courses.add(course);
-    }
-
-    @Override
-    public UserType getUserType() {
-        return UserType.teacher;
     }
 
 

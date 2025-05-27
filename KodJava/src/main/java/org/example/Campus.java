@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Campus {
     private static Campus instance = null;
-    private final ArrayList<User> users = new ArrayList<>();
-    private final ArrayList<Course> courses = new ArrayList<>();
+    private ArrayList<User> users = new ArrayList<>();
+    private ArrayList<Course> courses = new ArrayList<>();
 
     private Campus() {
     }
@@ -25,34 +25,34 @@ public class Campus {
         return null;
     }
 
-    public void createStudent(String login, String password, Department startingDepartment) {
-        Student createdStudent = new Student(login, password);
+    public void createStudent(String login, String password, Department dept) {
+        Student createdStudent = new Student(login, password, UserType.student);
         users.add(createdStudent);
-        createdStudent.addDepartment(startingDepartment);
-    }
-
-    public void createTeacher(String login, String password, Department department) {
-        Teacher createdTeacher = new Teacher(login, password, department);
-        users.add(createdTeacher);
+        createdStudent.addDepartment(dept);
     }
 
     public void createAdmin(String login, String password) {
-        Admin createdAdmin = new Admin(login, password);
+        Admin createdAdmin = new Admin(login, password, UserType.admin);
         users.add(createdAdmin);
     }
 
-    public void createCourse(Teacher creator, String name, Department department) {
-        Course createdCourse = new Course(name, department, creator);
+    public void createTeacher(String login, String password, Department dept) {
+        Teacher createdTeacher = new Teacher(login, password, UserType.teacher, dept);
+        users.add(createdTeacher);
+    }
+
+    public void createCourse(Teacher creator, String name, Department dept) {
+        Course createdCourse = new Course(name, dept, creator);
         courses.add(createdCourse);
         creator.joinCourse(createdCourse);
     }
 
 
 
-    public ArrayList<Course> getDepartmentCourses(Department department) {
+    public ArrayList<Course> getDepartmentCourses(Department dept) {
         ArrayList<Course> departmentCourses = new ArrayList<>();
         for (Course c : courses) {
-            if (c.getDepartment().equals(department)) {
+            if (c.getDepartment().equals(dept)) {
                 departmentCourses.add(c);
             }
         }
@@ -66,16 +66,16 @@ public class Campus {
         return false;
     }
 
-    boolean addStudentDepartment(String login, Department department) {
+    boolean addStudentDepartment(String login, Department dept) {
         Student student = (Student) fetchUser(login);
-        return student.addDepartment(department));
+        return student.addDepartment(dept);
     }
 
-    private User fetchUser( String login )
-    {
+    private User fetchUser(String login) {
         for( User u : users )
             if( u.getName().equals( login ) )
                 return u;
         return null;
     }
+
 }
